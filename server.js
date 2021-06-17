@@ -22,7 +22,7 @@ function requestHandler(request, response){
     request.end();
   })
   request.on("error", (error) => {
-    response.writeHead(500 { "Content-Type": "text/html"});
+    response.writeHead(500, { "Content-Type": "text/html"});
     response.write("<h1> server error bad request</h1>")
     request.end();
   })
@@ -44,13 +44,23 @@ function requestHandler(request, response){
     status = 200;
   } else if(url == "/contact") {
     if(method == "POST") {
-      message = buildHTMLResponse("Info Received.")
+      fileName = "thankYou"
+    } else {
+      fileName="contact";
     }
     status = 200;
   }
 
-  response.status(200);
-  response.setHeader("Content-Type","text/html");
-  // response.write;
-  response.end();
+  fs.readFile(`./${fileName}.html` , function sendContents(err, data) {
+    if(err) {
+      request.emit("error", err)
+      return
+      console.log(err);
+    }
+    response.statusCode = status;
+    response.setHeader("Content-Type", "text/html");
+    console.log(data);
+    response.write(data);
+    response.end();
+  })
 }
